@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!--[if IE]>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <![endif]-->
+  <title>增加管理员</title>
+  <!-- BOOTSTRAP CORE STYLE  -->
+  <link href="/css/bootstrap.css" rel="stylesheet">
+  <!-- FONT AWESOME ICONS  -->
+  <link href="/css/font-awesome.css" rel="stylesheet">
+  <!-- CUSTOM STYLE  -->
+  <link href="/css/style.css" rel="stylesheet">
+  <!-- HTML5 Shiv and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+  <!-- - : 不转义输出,不会转移html标签  = : 转义输出,会把HTML标签转义为 &gt; -->
+  <%- include('./header.ejs',{idx:'addAdmin'}) %>
+  <!-- MENU SECTION END-->
+  <ul class="breadcrumb">
+    <li><a href="#"></a>Home</li>
+    <li><a href="#"><%= new Date().getFullYear() %></a></li>
+    <li class="active">管理员管理</li>
+  </ul>
+  <div class="content-wrapper">
+    <div class="container">
+      <form class="form-horizontal" style="width:50%">
+        <div class="form-group">
+          <label for="firstname" class="col-sm-2 control-label">用户名：</label>
+          <div class="col-sm-4">
+            <input type="text" name="user" class="form-control" placeholder="请输入用户名" required>
+          </div>
+          <div class="col-sm-6 alert user_test">
+
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="firstname" class="col-sm-2 control-label">密码：</label>
+          <div class="col-sm-4">
+            <input type="password" name="pwd" class="form-control" placeholder="请输入密码" required>
+          </div>
+          <div class="col-sm-6 alert pwd_test">
+
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="firstname" class="col-sm-2 control-label">重复密码：</label>
+          <div class="col-sm-4">
+            <input type="password" name="pwd2" class="form-control" placeholder="重复密码" required>
+          </div>
+          <div class="col-sm-6 alert pwd2_test">
+
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-3"></div>
+          <input type="button" class="btn btn-default save" value="保存">
+          <input type="button" class="btn btn-default" value="返回" onclick="history.go(-1)">
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- CONTENT-WRAPPER SECTION END-->
+  <%- include('./footer.ejs') %>
+  <!-- FOOTER SECTION END-->
+  <!-- JAVASCRIPT AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
+  <!-- CORE JQUERY SCRIPTS -->
+  <script src="/js/jquery-1.11.1.js"></script>
+  <!-- BOOTSTRAP SCRIPTS  -->
+  <script src="/js/bootstrap.js"></script>
+  <script>
+    var flag = false;
+    $('input[name=user]').on('blur', function () {
+      console.log(1);
+      if (!$(this).val()) {
+        $(".user_test").removeClass('alert-success').addClass('alert-danger').html('内容不能为空');
+        return false;
+      }
+      if (!/^[a-z0-9]{4,16}$/.test($(this).val())) {
+        $(".user_test").removeClass('alert-success').addClass('alert-danger').html('请输入4-16位的任意数字字母');
+        return false;
+      }
+      // 验证管理员是否已经存在
+      $.ajax({
+        url: '/login',
+        type: 'propfind',
+        data: {
+          username: $(this).val()
+        },
+        success(res) {
+          if (res.result) {// 用户名可用
+            $('.user_test').removeClass('alert-success').addClass('alert-danger').html('用户名已存在');
+          } else {
+            $('.user_test').removeClass('alert-danger').addClass('alert-success').html('用户名可用');
+          }
+        }
+      })
+    })
+
+    $('input[name=pwd]').on('blur', function () {
+      //6-12
+      if (!/^[a-z0-9]{6,12}$/.test($(this).val())) {
+        $('.pwd_test').removeClass('alert-success').addClass('alert-danger').html('请输入6-12位任意字母数字');
+        return false;
+      }
+      $('.pwd_test').removeClass('alert-danger').addClass('alert-success').html('√');
+    });
+    $('input[name=pwd2]').on('input', function () {
+      if (!$(this).val()) return;
+      if ($(this).val() != $('input[name=pwd]').val()) {
+        $('.pwd2_test').removeClass('alert-success').addClass('alert-danger').html('密码不一致');
+        return false;
+      }
+      $('.pwd2_test').removeClass('alert-danger').addClass('alert-success').html('√');
+    })
+
+    $(function () {
+      $('.save').on('click', function () {
+        if (!$('input[name=user]').val()) {
+          alert('用户名不能为空');
+          return;
+        }
+        if (!$('input[name=pwd]').val()) {
+          alert('密码不能为空');
+          return;
+        }
+        if (!$('input[name=pwd2]').val()) {
+          alert('密码不能为空');
+          return;
+        }
+        let username = $('input[name=user]').val();
+        let password = $('input[name=pwd]').val();
+        var posttime = (new Date()).getTime();
+        var lastLoginTime = (new Date()).getTime();
+        $.ajax({
+          url: '/admin/addAdmin',
+          type: 'put',
+          data: {
+            username,
+            password,
+            posttime,
+            lastLoginTime
+          },
+          success(res) {
+            if (res.error) {
+              alert(res.msg);
+            } else {
+              alert(res.msg);
+            }
+            window.location = '/admin/listAdmin';
+          }
+        })
+      })
+    })
+  </script>
+</body>
+
+</html>

@@ -55,14 +55,13 @@ exports.addStudent = function (req, res) {
   let form = formidable();
   form.parse(req, (err, fields) => {
     if (err) {
-      callback({ error: 0, msg: '保存失败' });
+      res.json({ error: 0, msg: '数据接收失败' });
       return;
     }
-    // console.log(fields);
+
     Student.saveStudent(fields, (results) => {
-      // console.log(results);
       res.json(results);
-    })
+    });
   })
 }
 

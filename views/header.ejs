@@ -47,15 +47,14 @@
                         <li><a class="<%= idx=='index'?'menu-top-active':'' %>" href="/">学生管理</a>
                         </li>
                         <li><a class="<%= idx=='addStudent'?'menu-top-active':'' %>" href="/student/addStudent">增加学生</a></li>
-                        <li><a class="<%= idx=='admin'?'menu-top-active':'' %>" href="javascript:;">管理员管理</a></li>
-                        <li><a class="<%= idx=='adminStudent'?'menu-top-active':'' %>" href="javascript:;">增加管理员</a>
+                        <li><a class="<%= idx=='admin'?'menu-top-active':'' %>" href="/admin/listAdmin">管理员管理</a></li>
+                        <li><a class="<%= idx=='addAdmin'?'menu-top-active':'' %>" href="/admin/addAdmin">增加管理员</a>
                         </li>
                         <li><a href="/Logout" onclick="return confirm('确认退出?');">退出</a>
                         </li>
                     </ul>
                 </div>
             </div>
-
         </div>
     </div>
 </section>

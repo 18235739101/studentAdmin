@@ -17,7 +17,17 @@ const express = require('express'),
     updateStudent: uS,
     deleteStudent: dS
 
-  } = require('../controllers/studentCtrl');
+  } = require('../controllers/studentCtrl'),
+  {
+    showAddAdmin: sAA,
+    addAdmin:aA,
+    showListAdmin:sLA,
+    showList: sLT,
+    deleteAdmin: dA,
+    showUpdateAdmin:sUA,
+    updateAdmin:uA,
+    adminMd:aM
+  } = require('../controllers/adminCtrl');
 
 //生成路由:
 let router = express.Router();
@@ -45,6 +55,16 @@ router.put('/student/addStudent', aS);//访问接口 处理增加学生
 router.post('/student/:sid', uS);//访问接口 处理修改学生数据
 router.delete('/student/:sid', dS);//访问接口 处理删除学生
 
+router.get('/admin/addAdmin',sAA);// 访问增加管理员页面
+router.put('/admin/addAdmin', aA);//访问接口 处理增加管理员
+
+router.get('/admin/listAdmin',sLA);// 访问管理员列表
+router.get('/admin/msg', sLT);//访问接口 处理学生数据
+router.delete('/admin/:username', dA);//访问接口 处理删除管理员
+router.get('/admin/updateAdmin',sUA);// 访问接口 处理访问修改管理员页面
+router.post('/admin/:_id', uA);//访问接口 处理修改管理员
+
+router.put('/admin/md',aM); //访问接口 给input里的密码加密
 // 退出
 router.get('/Logout', logout)//访问接口 处理退出
 module.exports = router;
